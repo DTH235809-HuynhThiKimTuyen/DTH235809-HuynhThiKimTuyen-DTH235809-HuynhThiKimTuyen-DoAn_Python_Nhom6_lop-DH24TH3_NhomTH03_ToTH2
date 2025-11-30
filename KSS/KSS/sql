@@ -1,0 +1,81 @@
+-- 1. Xóa sạch làm lại (để tránh lỗi)
+DROP DATABASE IF EXISTS hotel_management;
+CREATE DATABASE hotel_management CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE hotel_management;
+
+-- 2. TẠO BẢNG USERS (Đây là bảng bạn đang thiếu)
+CREATE TABLE users (
+    Username VARCHAR(50) PRIMARY KEY,
+    Password VARCHAR(50) NOT NULL,
+    FullName VARCHAR(100) CHARACTER SET utf8mb4,
+    Role VARCHAR(20)
+);
+
+-- 3. Tạo các bảng còn lại
+CREATE TABLE phong (
+    MaPhong VARCHAR(10) PRIMARY KEY,
+    LoaiPhong VARCHAR(50) CHARACTER SET utf8mb4,
+    GiaNgay DECIMAL(18,0),
+    TrangThai VARCHAR(20) DEFAULT 'Trong'
+);
+
+CREATE TABLE dichvu (
+    MaDV VARCHAR(10) PRIMARY KEY,
+    TenDV VARCHAR(100) CHARACTER SET utf8mb4,
+    DonGia DECIMAL(18,0)
+);
+
+CREATE TABLE datphong (
+    MaDP INT AUTO_INCREMENT PRIMARY KEY,
+    MaPhong VARCHAR(10),
+    TenKhach VARCHAR(100) CHARACTER SET utf8mb4,
+    CCCD VARCHAR(20),
+    NgayVao DATETIME,
+    FOREIGN KEY (MaPhong) REFERENCES phong(MaPhong) ON DELETE CASCADE
+);
+
+CREATE TABLE sudungdv (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    MaDP INT,
+    MaDV VARCHAR(10),
+    SoLuong INT,
+    FOREIGN KEY (MaDP) REFERENCES datphong(MaDP) ON DELETE CASCADE,
+    FOREIGN KEY (MaDV) REFERENCES dichvu(MaDV) ON DELETE CASCADE
+);
+
+CREATE TABLE hoadon (
+    MaHD INT AUTO_INCREMENT PRIMARY KEY,
+    MaPhong VARCHAR(10),
+    TenKhach VARCHAR(100) CHARACTER SET utf8mb4,
+    NgayVao DATETIME,
+    NgayRa DATETIME,
+    TienPhong DECIMAL(18,0),
+    TienDichVu DECIMAL(18,0),
+    TongTien DECIMAL(18,0)
+);
+
+-- 4. QUAN TRỌNG: Thêm tài khoản Admin để đăng nhập
+INSERT INTO users (Username, Password, FullName, Role) VALUES
+('admin', 'admin', 'Quản Trị Viên', 'Admin'),
+('letan', '123', 'Lễ Tân', 'User');
+
+-- 5. Thêm dữ liệu Phòng mẫu
+INSERT INTO phong VALUES
+('101', 'Phòng Đơn', 300000, 'Trong'), ('102', 'Phòng Đơn', 300000, 'Trong'),
+('103', 'Phòng Đôi', 500000, 'Trong'), ('104', 'Phòng Đôi', 500000, 'Trong'),
+('201', 'Phòng VIP', 800000, 'Trong'), ('202', 'Phòng VIP', 800000, 'Trong'),
+('203', 'Phòng Đôi', 550000, 'Trong'), ('204', 'Phòng Đôi', 550000, 'Trong'),
+('301', 'Tổng Thống', 2000000, 'Trong'), ('302', 'Tổng Thống', 2000000, 'Trong'),
+('303', 'Gia Đình', 1200000, 'Trong'), ('304', 'Gia Đình', 1200000, 'Trong');
+
+-- 6. Thêm Dịch vụ mẫu
+INSERT INTO dichvu VALUES
+('DV01', 'Nước Suối', 10000), ('DV02', 'Bia Tiger', 25000),
+('DV03', 'Coca Cola', 15000), ('DV04', 'Mì Tôm Trứng', 35000),
+('DV05', 'Cơm Chiên', 50000), ('DV06', 'Giặt Ủi', 40000),
+('DV07', 'Thuê Xe Máy', 150000);
+
+INSERT INTO hoadon (MaPhong, TenKhach, NgayVao, NgayRa, TienPhong, TienDichVu, TongTien) VALUES
+('101', 'Nguyễn Văn Cũ', '2023-11-01 12:00:00', '2023-11-02 12:00:00', 300000, 20000, 320000),
+('201', 'Trần Thị Giàu', '2023-11-05 14:00:00', '2023-11-07 10:00:00', 1600000, 500000, 2100000),
+('103', 'Lê Văn Khách', '2023-11-10 08:00:00', '2023-11-10 20:00:00', 500000, 50000, 550000);
